@@ -1,7 +1,7 @@
-let store =  {
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-}
+let store =  Immutable.Map({
+    title: 'Mars Dashboard',
+    rovers: ['opportunity', 'curiosity','spirit'],
+})
 
 // add our markup to the page
 const root = document.getElementById('root')
@@ -12,55 +12,74 @@ const updateStore = (store, newState) => {
 }
 
 const render = async (root, state) => {
+    //root.innerHTML = App(rover, state)
     root.innerHTML = App(state)
-}
-//create content
-const App = (state) => {
-    //console.log('state, ', state)
-    let { rovers, apod } = state
-    //display data in the browser
-    return `${ImageOfTheDay(apod, 'curiosity')}`
-
+    console.log("data shuld be displayed on the secreen")
 }
 
-window.addEventListener('load', ()=> {
-    console.log('rendering image')
-
-    render(root, store)
-})
-// ------------------------------------------------------  COMPONENTS
-
-
-
-
-const ImageOfTheDay = (apod, rover) => {
-    //getImageOfTheDay(store)
-    
-    if (!apod){
-        getLatestImage(store, rover)
+//create navigation with inputs
+const createRoverNav = ()=> {
+    const nav = document.getElementById('menu')
+    const title = document.getElementById('title')
+    title.innerHTML = `${store.get("title")}`
+    nav.innerHTML
+    for ( rover of store.get("rovers")) {
+        let ele =  `<input type="button" value="${rover}" id="${rover}" name="${rover}" onClick="getLatestImage('${rover}')">`
+        nav.innerHTML += ele;
     }
+}
+window.addEventListener("load", () => {
+    //On load create menu with onclick
+    createRoverNav();
+});
 
 
-    if (apod.galleryImages.latest_photos){
-        apod.galleryImages.latest_photos.map((img,index) =>{
-            return `<div>
-                        <img src="${ img.img_src}" />
-                        <p>earth_date ${img.earth_date}</p>
-                        <p>landing_date: ${img.rover.landing_date}</p>
-                        <p>launch_date: ${img.rover.launch_date}</p>
-                        <p>status: ${img.rover.status}</p>
-                    </div>`
-        })
-    }           
-    
+const RoverImages = (state) => {
+    let imgList =  state.latestPhotos       
+    //get all the images and use .map to create a div containing the image
+    console.log("state.latest_photos", state.latestPhotos)
+    return imgList.map((img, index) => {
+        while(index < 10){
+            return `
+            <div class="gallery-image">
+                <img src="${ img.img_src}" />
+            </div>`
+        }
+        
+    });
+  }
+const RoverData = (state) => {
+    //get the information about the rover, it is the same for each image. Get it from the first image
+    let firstImage =  state.latestPhotos[0]
+    return `
+    <div class="gallery-rover-description">
+        <p><span>Rover Name:</span> ${firstImage.rover.name}</p>
+        <p><span>Landing Date</span>: ${firstImage.rover.landing_date}</p>
+        <p><span>Launch Date</span>: ${firstImage.rover.launch_date}</p>
+        <p><span>Status</span>: ${firstImage.rover.status}</p>
+    </div>`
+}
 
+//create HTML content
+const App = (state) => {
+    return `
+    <div class="gallery">
+        ${RoverData(state)}
+        <div class="gallery-list">
+            ${RoverImages(state)}
+        </div>
+    </div>`
 }
 
 // ------------------------------------------------------  API CALLS
-const getLatestImage = (state, rover) => {
-    let { apod } = state
 
+const getLatestImage = (rover) => {
+    console.log('rover api', rover)
     fetch(`http://localhost:3000/rovers/${rover}`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(res => res.json())  
+        .then((galleryImages) => {
+            latestPhotos = galleryImages.latest_photos;
+            updateStore(store, { latestPhotos });          
+        });      
 }
+

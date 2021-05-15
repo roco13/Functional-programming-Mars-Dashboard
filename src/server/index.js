@@ -25,14 +25,27 @@ app.get('/apod', async (req, res) => {
     }
 })
 
-app.get('/rovers/:roverName', async (req,res) => {
+// app.get('/rover/:roverName', async (req, res) => {
+//     //let { name } = req.params
+//     let rover = req.params.roverName
+//     try {
+//         let galleryImages = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover.toLowerCase()}/latest_photos?api_key=${process.env.API_KEY}`)
+//         .then(res => res.json())
+//         res.send(galleryImages)
+//     } catch (err) {
+//         console.log('error', err);
+//     }
+// })
+
+
+app.get('/rovers/:roverName', async (req, res) => {
 //app.get('/', async (req,res) => {
-    const rover = req.params.roverName
+    let rover = req.params.roverName
     try {
         let galleryImages = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/latest_photos?api_key=${process.env.API_KEY}`)
         //let roverImages = await fetch(`apodImages.json`)
         .then(res => res.json())
-        res.send({galleryImages})
+        res.send(galleryImages)
     
     } catch(error) {
         console.log('error',error)
