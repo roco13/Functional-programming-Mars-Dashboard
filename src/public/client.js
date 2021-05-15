@@ -32,13 +32,24 @@ window.addEventListener("load", () => {
     //On load create menu with onclick
     createRoverNav();
 });
-
+const MissionDescription = (rover => {
+    console.log('rover', rover)
+    switch (rover) {
+        case 'Opportunity':
+            return `Mission Goal: Determine if Mars was ever able to support microbial life.`
+        case 'Curiosity':
+            return `Mission Goal: To search for answers about the history of water on Mars.`
+        case 'Spirit':
+            return `Mission Goal: To search for answers about the history of water on Mars.`
+    }
+})
 
 const RoverImages = (state) => {
-    let imgList =  state.latestPhotos       
+    let imgList =  state.latestPhotos    
     //get all the images and use .map to create a div containing the image
     console.log("state.latest_photos", state.latestPhotos)
-    return imgList.map((img, index) => {
+    return (
+        imgList.map((img, index) => {
         while(index < 10){
             return `
             <div class="gallery-image">
@@ -47,13 +58,16 @@ const RoverImages = (state) => {
             </div>`
         }
         
-    });
+    }))
   }
 const RoverData = (state) => {
     //get the information about the rover, it is the same for each image. Get it from the first image
     let firstImage =  state.latestPhotos[0]
+    console.log('firstImage', firstImage)
+
     return `
     <div class="gallery-rover-description">
+     <h2>${MissionDescription(firstImage.rover.name)}</h2>
         <p><span>Rover Name:</span> ${firstImage.rover.name}</p>
         <p><span>Landing Date</span>: ${firstImage.rover.landing_date}</p>
         <p><span>Launch Date</span>: ${firstImage.rover.launch_date}</p>
