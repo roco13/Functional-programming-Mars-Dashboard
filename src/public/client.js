@@ -43,6 +43,7 @@ const RoverImages = (state) => {
             return `
             <div class="gallery-image">
                 <img src="${ img.img_src}" />
+                <p><span>Photo taken on: </span>${img.earth_date}</p>
             </div>`
         }
         
