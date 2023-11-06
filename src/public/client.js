@@ -58,7 +58,7 @@ const RoverImages = (state) => {
             </div>`
         }
         
-    }))
+    }).join(''))
   }
 const RoverData = (state) => {
     //get the information about the rover, it is the same for each image. Get it from the first image
